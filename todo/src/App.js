@@ -4,6 +4,7 @@ import React, {useState} from 'react';
 
 const App = ()=> {
   const [tasks, setTasks] = useState([]);
+  
 
   const addTask = ()=>{
   
@@ -32,11 +33,9 @@ const App = ()=> {
       )}
     }
 
-    const deleteFunction =(key)=>{
-      const removedArr = [...tasks].filter(todo => todo.key !== key);
-      setTasks(removedArr)
-      console.log(removedArr);
-
+    const deleteFunction =() =>{
+      tasks.slice(value1,1)
+      setTasks(tasks);
     };
   }
 
