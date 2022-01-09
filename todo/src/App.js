@@ -1,58 +1,138 @@
 import './App.css';
 import './fontello-bddbbf1a/css/fontello.css';
-import React, {useState} from 'react';
+import React from 'react';
+
+let counter = 0;
+
+const getUniqueId = () => {
+  	return ++counter;
+};
+
+
 
 const App = ()=> {
-  const [tasks, setTasks] = useState([]);
-  
+  const [tasks, setTasks] = React.useState([]);
 
-  const addTask = ()=>{
-  
-    const value1 = document.getElementById("left-input1").value;
-    const value2 = document.getElementById("left-input2").value;
-  
-  function getRandomColor(){
-    var colors = ["#B0D0FFff", "#FA9746ff", "#BAE9E3ff", "#BC8E76ff", "#7796CDff"];
-    var color = colors[Math.floor(Math.random() * colors.length)];
-    return color;
-  }
+    const taskNameRef = React.useRef();
+    const taskDeadlineRef = React.useRef();
+    const taskPlaceRef = React.useRef();
+    
 
-    if(value1==="" || value2===""){
-      alert('pola nie mogą być puste!')
+
+    const addTask = () => {
+        const taskName = taskNameRef.current.value;
+        const taskDeadline = taskDeadlineRef.current.value;
+        const taskPlace = taskPlaceRef.current.value;
+
+
+
+        if (taskName === '' || taskDeadline === '' || taskPlace === '') {
+          	alert('pola nie mogą być puste!');
+        } else {
+            taskNameRef.current.value = '';
+            taskDeadlineRef.current.value = '';
+            taskPlaceRef.current.value = '';
+            
+
+            const task = {
+                id: getUniqueId(),
+                name: taskName,
+                deadline: taskDeadline,
+                place: taskPlace
+            };
+            if(task.place==="House"){
+              task.color = 'rgba(177, 211, 255, 0.95)'
+            }
+            else if(task.place==="Work"){
+              task.color = 'rgba(186, 233, 227, 0.95)'
+            }
+            else if(task.place==="School"){
+              task.color = 'rgba(250, 151, 70, 0.95)'
+            }
+            setTasks([...tasks, task]);
+        }
     }
 
-    else{
-      {setTasks(prevState => 
-          [...prevState,
-          <div id={value1} style={{"backgroundColor": getRandomColor()}} className="task-div" key={value1.toString()}> 
-            <div id='value1-div'>{value1}</div>
-            <div id='value2-div'>{value2}</div>
-            <button className='delete-button' onClick={deleteFunction}><i className='icon-trash-empty'></i></button>
-          </div>]
+    const sortArray = type => {
+      const types = {
+        Date: 'deadline',
+        Alphabet: 'name',
+        Place: 'place',
+        Time: 'id'
+      };
+      const sortProperty = types[type];
+      const sorted = [...tasks].sort((a, b) => {
+        if(sortProperty==='id'){
+          return b[sortProperty] - a[sortProperty]
+        }
+        else{
+          return ((a[sortProperty]).localeCompare(b[sortProperty]))
+        };
           
-      )}
-    }
-
-    const deleteFunction =() =>{
-      tasks.slice(value1,1)
-      setTasks(tasks);
+      });
+      setTasks(sorted);
     };
-  }
 
-  return (
-    <div className="app">
-      <div className="left-container">
-          <h1 className='h1'>Wpisz zadanie <br/>do wykonania:</h1>
-          <form className="inputs">
-            <p className='p-left'>Zadanie do wykonania:<input id="left-input1" type="text" maxLength="100"></input></p>           
-            <p className='p-left'>Termin wykonania:<input id="left-input2"  type="text"></input></p>
-            <button className='add-button' onClick={addTask} type="reset">Dodaj</button>
+
+
+    return (
+      <div className='container-app'>
+        <div className='form-container'>
+          <div className='task-form'>Wpisz zadanie do wykonania:
+            <div className='colors-div'>
+              <div className='house-color'></div>Dom
+              <div className='work-color'></div>Praca
+              <div className='school-color'></div>Szkoła
+            </div>
+          </div>
+          <form className='form' onSubmit={e => e.preventDefault()}>
+            <div className='input-div'>
+              Zadanie do wykonania: <input className='input' ref={taskNameRef} type="text" maxLength="100" />
+            </div>           
+            <div className='input-div'>
+              Termin wykonania: <input className='input' ref={taskDeadlineRef} type="date" />
+            </div>
+            <div className='input-div'>
+              Miejsce wykonania: 
+              <select className='input' name="place" id="place" ref={taskPlaceRef}>
+                <option  value="House">Dom</option>
+                <option  value="Work">Praca</option>
+                <option  value="School">Szkoła</option>
+              </select>
+            </div>
+            <button className='add-button' onClick={addTask}>Dodaj</button>
           </form>
+          <div className='sort-div'>
+              Sortuj: 
+              <select className='sort' name="sort" id="sort" onChange={(e) => sortArray(e.target.value)}>
+                <option  value="Date">Datami</option>
+                <option  value="Alphabet">Alfabetycznie</option>
+                <option  value="Place">Miejscem</option>
+                <option  value="Time">Czasem dodania</option>
+              </select>
+          </div>
+        </div>
+        
+        <div className='all-tasks'>
+        
+            
+          {tasks.map(task => {
+              const handleDeleteTaskClick = () => {
+                  setTasks(tasks.filter(item => item !== task));
+              };
+              return (
+                <div className='task-div' key={task.id} style={{backgroundColor: task.color}}> 
+                  <div className='task-name-div'>{task.name}</div>
+                  <div className='task-deadline-div'>{task.deadline}</div>
+                  <button className='delete-button' onClick={handleDeleteTaskClick}><i className='icon-trash-empty'></i></button>
+                </div>
+              );
+          })}
+        </div>
+        <div className='footer'>
+          <a className='link' href="https://pl.freepik.com/wektory/ludzie">Ludzie plik wektorowy utworzone przez pch.vector - pl.freepik.com</a>
+        </div>
       </div>
-      <div className="right-container">
-        {tasks}
-      </div>
-    </div>
   );
 }
 export default App;
