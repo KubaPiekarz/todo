@@ -17,14 +17,10 @@ const App = ()=> {
     const taskDeadlineRef = React.useRef();
     const taskPlaceRef = React.useRef();
     
-
-
     const addTask = () => {
         const taskName = taskNameRef.current.value;
         const taskDeadline = taskDeadlineRef.current.value;
         const taskPlace = taskPlaceRef.current.value;
-
-
 
         if (taskName === '' || taskDeadline === '' || taskPlace === '') {
           	alert('pola nie mogą być puste!');
@@ -33,7 +29,6 @@ const App = ()=> {
             taskDeadlineRef.current.value = '';
             taskPlaceRef.current.value = '';
             
-
             const task = {
                 id: getUniqueId(),
                 name: taskName,
@@ -73,8 +68,6 @@ const App = ()=> {
       setTasks(sorted);
     };
 
-
-
     return (
       <div className='container-app'>
         <div className='form-container'>
@@ -112,10 +105,7 @@ const App = ()=> {
               </select>
           </div>
         </div>
-        
         <div className='all-tasks'>
-        
-            
           {tasks.map(task => {
               const handleDeleteTaskClick = () => {
                   setTasks(tasks.filter(item => item !== task));
